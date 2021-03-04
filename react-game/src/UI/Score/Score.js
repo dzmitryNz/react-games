@@ -6,8 +6,9 @@ const Score = styled.p`
   font-weight: 500;
   background-color: #eee;
   border-radius: 5px;
-  min-width: 70px;
+  min-width: 90px;
   margin: 0 20px;
+  text-align: center;
   :hover{
     cursor: pointer;
     background-color: brown;

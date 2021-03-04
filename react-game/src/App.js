@@ -34,38 +34,57 @@ class App extends Component {
     ArrowUp: direction.UP,
   }
 
-  getInitState = () => ({
+  getInitState = () => {
+    const localState = localStorage.getItem("2048state");
+    const state = !localState ? this.getNewState() : JSON.parse(localState)
+    return state
+  }
+
+  getNewState = () => ({
     cells: getInitCells(),
     gameState: gameStates.IDLE,
     moveDirection: null,
     score: 0,
+    fullscreen: false,
     theme: true,
     sound: true,
     music: true
   })
 
   startNewGame = () => {
-    this.setState(this.getInitState())
+    this.setState(this.getNewState())
   }
 
-  sound = () => {
+  toggleSound = () => {
     this.setState(state => ({
       ...state,
       sound: !this.state.sound,
     }))
+    localStorage.setItem("2048state", JSON.stringify(this.state))
   }
   
-  music = () => {
+  toggleMusic = () => {
        this.setState(state => ({
       ...state,
       music: !this.state.music,
     }))
+    localStorage.setItem("2048state", JSON.stringify(this.state))
   }
-  themeSwitch = () => {
+
+  toggleTheme = () => {
        this.setState(state => ({
       ...state,
       theme: !this.state.theme,
     }))
+    localStorage.setItem("2048state", JSON.stringify(this.state))
+  }
+
+  toggleFullscreen = () => {
+       this.setState(state => ({
+      ...state,
+      fullscreen: !this.state.fullscreen,
+    }))
+    localStorage.setItem("2048state", JSON.stringify(this.state))
   }
 
   scoreDialog = () => {
@@ -116,6 +135,7 @@ class App extends Component {
       gameState: gameStates.IDLE,
       moveDirection: null,
     }))
+    localStorage.setItem("2048state", JSON.stringify(this.state))
   }
 
   handleKeyPress = event => {
@@ -134,27 +154,21 @@ class App extends Component {
   }
 
   render() {
-    const { cells, score } = this.state
+    const { cells, score, theme } = this.state;
+    const themeClass = theme ? "dark" : "light"
     return (
-      <Layout>
+      <Layout className={themeClass}>
         <ControllPanel>
           <Button onClick={this.startNewGame}>New</Button>
-          <Button onClick={this.sound}>{this.state.sound ? "Sound Off" : "Sound On"}</Button>
-          <Button onClick={this.music}>{this.state.music ? "Music Off" : "Music On"}</Button>
+          <Button onClick={this.toggleSound}><i className="material-icons">{this.state.sound ? "notifications_off" : "notifications"}</i></Button>
+          <Button onClick={this.toggleMusic}><i className="material-icons">{this.state.music ? "music_off" : "music_note"}</i></Button>
+          <Button onClick={this.toggleTheme}><i className="material-icons">{this.state.theme ? "dark_mode" : "light_mode"}</i></Button>
+          <Button onClick={this.toggleFullscreen}><i className="material-icons">{this.state.fullscreen ? "fullscreen_exit" : "fullscreen"}</i></Button>
           <Score onClick={this.scoreDialog}>{score}</Score>
         </ControllPanel>
         <Field cells={cells} />
-        <Footer>
-            <Button onClick={this.themeSwitch}>{this.state.theme ? "Dark" : "Light"}</Button>
-            <Button onClick={this.themeSwitch}>{this.state.theme ? "Dark" : "Light"}</Button>
-     <div className="footer">
-    <a href="https://github.com/dzmitrynz" target="_blank" rel="noopener noreferrer">dzmitryNz</a>
-      <a className='footer__school' href="https://rs.school/js/">
-        <img src="https://rollingscopes.com/images/logo_rs2.svg" alt="rsschool" />
-      </a>
-    </div>
-     </Footer>
-      </Layout>
+        <Footer />
+    </Layout>
     )
   }
 }

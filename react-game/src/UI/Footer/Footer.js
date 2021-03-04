@@ -3,8 +3,12 @@ import styled from 'styled-components';
 
 class Footer extends PureComponent {
   render() {
-    const { children } = this.props
-    return <Container>{children}</Container>
+    return <Container className="footer">
+    <a href="https://github.com/dzmitrynz" target="_blank" rel="noopener noreferrer">dzmitryNz</a>
+    <a className='footer__school' href="https://rs.school/js/">
+      <img src="https://rollingscopes.com/images/logo_rs2.svg" alt="rsschool" />
+    </a>
+    </Container>
   }
 }
 
@@ -15,21 +19,19 @@ const Container = styled.div`
   padding: 0;
   width: 425px;
   align-items: center;
-  color: snow;
   text-decoration: none;
   transition: all 0.5s;
   img{
     height: 70px;
     weight: 70px;
     transition: all 0.5s;
-
   }
   img:hover {
     transform: rotate(45deg);
   }
 
   a{
-    color: snow;
+    color: chocolate;
     text-decoration: none;
     vertical-align: middle;
     margin: 0 10px;

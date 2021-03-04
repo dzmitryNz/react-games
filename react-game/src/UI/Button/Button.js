@@ -9,11 +9,14 @@ const Button = styled.button`
   font-size: 20px;
   font-weight: 500;
   outline: none;
-  padding: 5px 15px;
+  padding: 10px 10px;
   text-transform: capitalize;
   align-items: center;
-  margin: 15px auto;
+  margin: 10px auto;
   transition: all 0.3s;
+  .material-icons{
+    vertical-align: middle;
+  }
   :hover{
   background-color: brown;
   }

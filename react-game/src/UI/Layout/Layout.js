@@ -5,7 +5,7 @@ class Layout extends PureComponent {
   render() {
     const { children } = this.props
     return (
-      <Main>
+      <Main className={this.props.className}>
         <Content>{children}</Content>
       </Main>
     )

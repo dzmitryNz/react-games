@@ -31,9 +31,9 @@ class Field extends PureComponent {
 }
 
 const FieldTag = styled.div`
-  height: 475px;
+  height: 460px;
   position: relative;
-  width: 475px;
+  width: 450px;
 `
 
 const Background = styled.div`
