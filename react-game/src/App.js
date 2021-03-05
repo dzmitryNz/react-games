@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import Fullscreen from 'react-fullscreen-crossbrowser';
+import music from './nadia.mp3'
+import clickSound from './click.wav'
 import Layout from 'UI/Layout'
 import Field from 'UI/Field'
 import ControllPanel from 'UI/ControllPanel'
@@ -22,7 +25,7 @@ class App extends Component {
     super(props)
     this.state = this.getInitState()
   }
-
+  
   mapKeyCodesToDirections = {
     KeyA: direction.LEFT,
     KeyS: direction.DOWN,
@@ -45,14 +48,24 @@ class App extends Component {
     gameState: gameStates.IDLE,
     moveDirection: null,
     score: 0,
-    fullscreen: false,
     theme: true,
     sound: true,
-    music: true
+    music: true,
+    isFullscreenEnabled: false,
+    modal: false
   })
 
+  getNewCells = () => {
+    this.setState(state => ({
+      ...state,
+      score: 0,
+      cells: getInitCells()
+    }))
+    localStorage.setItem("2048state", JSON.stringify(this.state))
+  }
+
   startNewGame = () => {
-    this.setState(this.getNewState())
+    this.setState(this.getNewCells())
   }
 
   toggleSound = () => {
@@ -63,12 +76,23 @@ class App extends Component {
     localStorage.setItem("2048state", JSON.stringify(this.state))
   }
   
+  playMusic = () => {
+      const musical = new Audio(music);
+      if (this.state.music) {
+        musical.play();
+        // musical.currentTime = 0;  
+      }
+      if (!this.state.music){
+        musical.pause();
+    }
+  }
+
   toggleMusic = () => {
        this.setState(state => ({
       ...state,
       music: !this.state.music,
     }))
-    localStorage.setItem("2048state", JSON.stringify(this.state))
+    localStorage.setItem("2048state", JSON.stringify(this.state));
   }
 
   toggleTheme = () => {
@@ -82,20 +106,31 @@ class App extends Component {
   toggleFullscreen = () => {
        this.setState(state => ({
       ...state,
-      fullscreen: !this.state.fullscreen,
+      isFullscreenEnabled: !this.state.isFullscreenEnabled,
     }))
-    localStorage.setItem("2048state", JSON.stringify(this.state))
+   localStorage.setItem("2048state", JSON.stringify(this.state))
   }
+
+  soundPlay = (sound) => {
+    if (this.state.sound) {
+      const audio = new Audio(sound);
+      audio.play();
+      audio.currentTime = 0;  
+    }
+      }
 
   scoreDialog = () => {
        this.setState(state => ({
       ...state,
-      music: !this.state.music,
+      modal: !this.state.modal,
     }))
   }
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleKeyPress)
+    if (this.state.music) {
+      // this.musicPlay(music);
+    }    
   }
 
   componentWillUnmount() {
@@ -107,13 +142,14 @@ class App extends Component {
       prevState.gameState !== this.state.gameState &&
       this.state.gameState === gameStates.PROCESSING
     ) {
-      this.processGame()
+      this.processGame();
+      if (this.state.sound) {
+      this.soundPlay(clickSound);
+      }    
     }
   }
-
+  
   async processGame() {
-    console.log('processGame')
-
     this.setState(state => ({
       ...state,
       cells: moveCells(state.cells, state.moveDirection),
@@ -157,18 +193,22 @@ class App extends Component {
     const { cells, score, theme } = this.state;
     const themeClass = theme ? "dark" : "light"
     return (
+      <Fullscreen enabled={this.state.isFullscreenEnabled}
+        onChange={isFullscreenEnabled => this.setState({isFullscreenEnabled})}>
       <Layout className={themeClass}>
         <ControllPanel>
           <Button onClick={this.startNewGame}>New</Button>
-          <Button onClick={this.toggleSound}><i className="material-icons">{this.state.sound ? "notifications_off" : "notifications"}</i></Button>
-          <Button onClick={this.toggleMusic}><i className="material-icons">{this.state.music ? "music_off" : "music_note"}</i></Button>
+          <Button onClick={this.toggleSound}><i className="material-icons">{this.state.sound ? "notifications" : "notifications_off"}</i></Button>
+          <Button onClick={this.toggleMusic}><i className="material-icons">{this.state.music ? "music_note" : "music_off"}</i></Button>
           <Button onClick={this.toggleTheme}><i className="material-icons">{this.state.theme ? "dark_mode" : "light_mode"}</i></Button>
-          <Button onClick={this.toggleFullscreen}><i className="material-icons">{this.state.fullscreen ? "fullscreen_exit" : "fullscreen"}</i></Button>
+          <Button onClick={this.showInfo}><i className="material-icons">info</i></Button>
+          <Button onClick={this.toggleFullscreen}><i className="material-icons">{this.state.isFullscreenEnabled ? "fullscreen_exit" : "fullscreen"}</i></Button>
           <Score onClick={this.scoreDialog}>{score}</Score>
         </ControllPanel>
         <Field cells={cells} />
         <Footer />
     </Layout>
+    </Fullscreen>
     )
   }
 }
